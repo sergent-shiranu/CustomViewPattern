@@ -1,34 +1,182 @@
 package com.adva.customviewpattern;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 
 import com.adva.basecustomview.BaseCustomView;
 
 /**
  * Created by T530 on 28/09/2014.
  */
-public class CustomCircularView extends BaseCustomView {
+public class CustomCircularView extends BaseCustomView implements View.OnClickListener {
+
+    public static String TAG = "CustomCircularView";
+
+    private int defRadius = 20;
+    private int strokeColor = 0xFFFF8C00;
+    private int strokeWidth = 10;
 
     public CustomCircularView(Context context) {
         super(context);
+        initCircleView();
+    }
+
+    public CustomCircularView(Context context, int inStrokeWidth, int inStrokeColor) {
+        super(context);
+        strokeColor = inStrokeColor;
+        strokeWidth = inStrokeWidth;
+        initCircleView();
     }
 
     public CustomCircularView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
-    public CustomCircularView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public CustomCircularView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        TypedArray t = context.obtainStyledAttributes(attrs, R.styleable.CustomCircularView, defStyle, 0);
+        strokeColor = t.getColor(R.styleable.CustomCircularView_strokeColor, strokeColor);
+        strokeWidth = t.getInt(R.styleable.CustomCircularView_strokeWidth, strokeWidth);
+        t.recycle();
+        initCircleView();
+    }
+
+    public void initCircleView() {
+        this.setMinimumHeight(defRadius * 2);
+        this.setMinimumWidth(defRadius * 2);
+        this.setOnClickListener(this);
+        this.setClickable(true);
+        this.setSaveEnabled(true);
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        Log.d(TAG, "onDraw called");
+        int w = this.getWidth();
+        int h = this.getHeight();
+        int ox = w / 2;
+        int oy = h / 2;
+        int rad = Math.min(ox, oy) / 2;
+        canvas.drawCircle(ox, oy, rad, getBrush());
+    }
+
+    private Paint getBrush() {
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setStrokeWidth(strokeWidth);
+        p.setColor(strokeColor);
+        p.setStyle(Paint.Style.STROKE);
+        return p;
     }
 
     @Override
     protected int hGetMaximumHeight() {
-        return 0;
+        return defRadius * 2;
     }
 
     @Override
     protected int hGetMaximumWidth() {
-        return 0;
+        return defRadius * 2;
+    }
+
+    public void onClick(View v) {
+        defRadius *= 1.2;
+        adjustMinimumHeight();
+        requestLayout();
+        invalidate();
+    }
+
+    private void adjustMinimumHeight() {
+        this.setMinimumHeight(defRadius * 2);
+        this.setMinimumWidth(defRadius * 2);
+    }
+
+    /*
+    * ***************************************************************
+    * Save and restore work
+    * ***************************************************************
+    */
+    @Override
+    protected void onRestoreInstanceState(Parcelable p) {
+        this.onRestoreInstanceStateStandard(p);
+        this.initCircleView();
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return this.onSaveInstanceStateStandard();
+    }
+
+    private void onRestoreInstanceStateStandard(Parcelable state) {
+//If it is not yours doesn't mean it is BaseSavedState
+//You may have a parent in your hierarchy that has their own
+//state derived from BaseSavedState
+//It is like peeling an onion or a Russian doll
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+//it is our state
+        SavedState ss = (SavedState) state;
+//Peel it and give the child to the super class
+        super.onRestoreInstanceState(ss.getSuperState());
+        defRadius = ss.defRadius;
+    }
+
+    private Parcelable onSaveInstanceStateStandard() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.defRadius = this.defRadius;
+        return ss;
+    }
+
+    /*
+    * ***************************************************************
+    * Saved State inner static class
+    * ***************************************************************
+    */
+    public static class SavedState extends BaseSavedState {
+        int defRadius;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(defRadius);
+        }
+
+        //Read back the values
+        private SavedState(Parcel in) {
+            super(in);
+            defRadius = in.readInt();
+        }
+
+        @Override
+        public String toString() {
+            return "CircleView defRadius:" + defRadius;
+        }
+
+        @SuppressWarnings("hiding")
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }
