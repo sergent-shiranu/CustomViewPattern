@@ -4,19 +4,99 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="match_parent">
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="NGUYEN" />
+
     <com.adva.customviewpattern.CustomCircularView
         android:id="@+id/circle_view_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         circleViewPkg:strokeWidth="5"
-        circleViewPkg:strokeColor="@android:color/holo_red_dark"/>
+        circleViewPkg:strokeColor="@android:color/holo_red_dark" />
+
     <TextView
         android:id="@+id/text1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Trung" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome to the Flow Layout" />
+
+        <com.adva.basecustomlayoutview.FlowLayout
+            android:id="@+id/durationControlId"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            circleViewPkg:hspace="10dp"
+            circleViewPkg:vspace="10dp"
+            circleViewPkg:layout_space="20dp">
+
+            <Button
+                android:text="Button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Button5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="B1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="B2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="B3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="B4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="B5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.adva.basecustomlayoutview.FlowLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Scratch for debug text" />
+    </LinearLayout>
+
+
 </LinearLayout>
